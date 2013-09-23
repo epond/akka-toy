@@ -6,6 +6,7 @@ object FutureExamples {
     futureMap
     futureFlatMap
     futureFilter
+    futureForComp
   }
 
   // A map is fine if modifying a single Future
@@ -38,5 +39,19 @@ object FutureExamples {
       case m: NoSuchElementException => 0
     }
     f3 foreach(x => println("futureFilterB: " + x)) // evaluate 4, ensure it is not divisible by 2 (with recovery value)
+  }
+
+  // Use of map, flatMap and filter can be made more readable by using a for comprehension
+  def futureForComp = {
+    val f1 = Future("Hello" + "World")
+    val f2 = Future(3)
+    val f3 = (a: String, b: Int) => Future(a.length * b)
+    val f4 = for {
+      a <- f1
+      b <- f2
+      c <- f3(a, b)
+      if (c % 2 == 0)
+    } yield c
+    f4 foreach(x => println("futureForComp: " + x)) // concatenate strings, evaluate 3, multiply length by 3, ensure it is divisible by 2
   }
 }
